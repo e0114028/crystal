@@ -1,14 +1,14 @@
 from django import forms
 from.models import Message,Group,Friend,Good
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
+from dozoo_app.models import  User 
 
 # Messageのフォーム（未使用）
 class MessageForm(forms.ModelForm):
     class Meta:
         model = Message
-        fields = ['owner','group','content']
-
-# Groupのフォーム（未使用）
+        # fields = ['owner','group','content','image'] # Groupのフォーム（未使用）
+        fields = ['owner','group','content'] # Groupのフォーム（未使用）
 class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
@@ -64,9 +64,9 @@ class CreateGroupForm(forms.Form):
 
 # 投稿フォーム
 class PostForm(forms.Form):
-    content = forms.CharField(max_length=500, \
-        widget=forms.Textarea(attrs={'class':'form-control', 'rows':2}))
-
+    content = forms.CharField(max_length=500, widget=forms.Textarea(attrs={'class':'form-control', 'rows':2}))
+    image_content = forms.FileField()
+    
     
     def __init__(self, user, *args, **kwargs):
         super(PostForm, self).__init__(*args, **kwargs)

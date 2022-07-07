@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
-from django.contrib.auth.models import User
+from dozoo_app.models import  User 
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -8,47 +8,57 @@ from django.contrib.auth.decorators import login_required
 
 from .models import Message,Friend,Group,Good
 from .forms import GroupCheckForm,GroupSelectForm,\
-    FriendsForm,CreateGroupForm,PostForm
+    FriendsForm,CreateGroupForm,PostForm,MessageForm
+from django.shortcuts import get_object_or_404
 
+    
 # indexのビュー関数
-@login_required(login_url='/admin/login/')
+#@login_required(login_url='/admin/login/')
 def index(request, page=1):
-    # publicのuserを取得
-    (public_user, public_group) = get_public()
 
-    # POST送信時の処理
-    if request.method == 'POST':
+###　とりあえずコメントアウト
 
-        # Groupsのチェックを更新した時の処理
-        # フォームの用意
-        checkform = GroupCheckForm(request.user,request.POST)
-        # チェックされたGroup名をリストにまとめる
-        glist = []
-        for item in request.POST.getlist('groups'):
-            glist.append(item)
-        # Messageの取得
-        messages = get_your_group_message(request.user, \
-                glist, page)
+    # # publicのuserを取得
+    # (public_user, public_group) = get_public()
 
-    # GETアクセス時の処理
-    else:
-        # フォームの用意
-        checkform = GroupCheckForm(request.user)
-        # Groupのリストを取得
-        gps = Group.objects.filter(owner=request.user)
-        glist = [public_group.title]
-        for item in gps:
-            glist.append(item.title)
-        # メッセージの取得
-        messages = get_your_group_message(request.user, glist, page)
+    # # POST送信時の処理
+    # if request.method == 'POST':
 
-    # 共通処理
-    params = {
-        'login_user':request.user,
-        'contents':messages,
-        'check_form':checkform,
-    }
-    return render(request, 'dozoo_app/index.html', params)
+    #     # Groupsのチェックを更新した時の処理
+    #     # フォームの用意
+    #     checkform = GroupCheckForm(request.user,request.POST)
+    #     # チェックされたGroup名をリストにまとめる
+    #     glist = []
+    #     for item in request.POST.getlist('groups'):
+    #         glist.append(item)
+    #     # Messageの取得
+    #     messages = get_your_group_message(request.user, \
+    #             glist, page)
+
+    # # GETアクセス時の処理
+    # else:
+    #     # フォームの用意
+    #     checkform = GroupCheckForm(request.user)
+    #     # Groupのリストを取得
+    #     gps = Group.objects.filter(owner=request.user)
+    #     glist = [public_group.title]
+    #     for item in gps:
+    #         glist.append(item.title)
+    #     # メッセージの取得
+    #     messages = get_your_group_message(request.user, glist, page)
+
+    # params = {
+    #         'login_user':request.user,
+    #         'contents':messages,
+    #         'check_form':checkform,
+    #     }
+
+    # return render(request, 'dozoo_app/index.html', params)
+
+##############
+
+
+    return render(request, 'dozoo_app/index.html')
 
 @login_required(login_url='/admin/login/')
 def groups(request):
@@ -171,26 +181,35 @@ def creategroup(request):
 
 # メッセージのポスト処理
 @login_required(login_url='/admin/login/')
-def post(request):
+def post(request, message_id):
     # POST送信の処理
     if request.method == 'POST':
         # 送信内容の取得
-        gr_name = request.POST['groups']
-        content = request.POST['content']
-        # Groupの取得
-        group = Group.objects.filter(owner=request.user) \
-                .filter(title=gr_name).first()
-        if group == None:
-            (pub_user, group) = get_public()
-        # Messageを作成し設定して保存
-        msg = Message()
-        msg.owner = request.user
-        msg.group = group
-        msg.content = content
-        msg.save()
+        # message = get_object(Message, pk=message_id)
+        message = get_object_or_404(Message, pk=message_id)
+        form = MessageForm(request.POST, request.FILES, instance=message)
+        # if form.is_valid():
+        form.save()
+
+        # gr_name = request.POST['groups']
+        # content = request.POST['content']
+        # image_content = request.POST['image_content']
+
+        # # Groupの取得
+        # group = Group.objects.filter(owner=request.user) .filter(title=gr_name).first()
+        # if group == None:
+        #     (pub_user, group) = get_public()
+        # # Messageを作成し設定して保存
+        # msg = Message()
+        # msg.owner = request.user
+        # msg.group = group
+        # msg.content = content
+        # # msg.image = image_content
+        # msg.save()
+
         # メッセージを設定
         messages.success(request, '新しいメッセージを投稿しました！')
-        return redirect(to='/dozoo_app')
+        return redirect(to='/')
     
     # GETアクセス時の処理
     else:

@@ -119,7 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ja'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tokyo'
 
 USE_I18N = True
 
@@ -161,3 +161,13 @@ ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 AUTH_USER_MODEL = 'dozoo_app.User'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR and 'media'
+#MEDIA_ROOT = f'/var/www/{BASE_DIR.name}/media
+
+#MEDIA_URL = '/media/'
+#if DEBUG:
+#   MEDIA_ROOT = BASE_DIR / 'media'
+#else:
+#   MEDIA_ROOT = f'/var/www/{BASE_DIR.name}/media
