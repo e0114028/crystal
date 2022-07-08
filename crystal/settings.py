@@ -65,7 +65,7 @@ ROOT_URLCONF = 'crystal.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ BASE_DIR and "templates"],
+        'DIRS': [os.path.join(BASE_DIR and "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+  <!-- object_list は Article.objects.all() と同じ結果となる -->
+  {% for message in object_list %}
+  <li>{{ message.title }}</li>
+  {% endfor %}
+</body>
+</html>
